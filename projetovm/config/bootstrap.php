@@ -231,3 +231,23 @@ ServerRequest::addDetector('tablet', function ($request) {
 // and https://unicode-org.github.io/icu/userguide/format_parse/datetime/#datetime-format-syntax
 // \Cake\I18n\Date::setToStringFormat('dd.MM.yyyy');
 // \Cake\I18n\Time::setToStringFormat('dd.MM.yyyy HH:mm');
+
+/*
+ * Configure CakePdf for PDF generation
+ */
+Configure::write('CakePdf', [
+    'engine' => 'CakePdf.Dompdf',
+    'options' => [
+        'print-media-type' => false,
+        'outline' => true,
+        'dpi' => 96
+    ],
+    'margin' => [
+        'bottom' => 15,
+        'left' => 50,
+        'right' => 30,
+        'top' => 45
+    ],
+    'orientation' => 'portrait',
+    'download' => true
+]);

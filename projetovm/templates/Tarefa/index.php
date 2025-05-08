@@ -2,11 +2,36 @@
 /**
  * @var \App\View\AppView $this
  * @var iterable<\App\Model\Entity\Tarefa> $tarefa
+ * @var array $situacoes
+ * @var string|null $situacao
+ * @var string|null $dataCriacao
  */
 ?>
 <div class="tarefa index content">
     <?= $this->Html->link(__('New Tarefa'), ['action' => 'add'], ['class' => 'button float-right']) ?>
+    <?= $this->Html->link('Sair', ['controller' => 'Users', 'action' => 'logout'], ['class' => 'button float-right']) ?>
+    <?= $this->Html->link('Exportar para PDF', ['action' => 'exportPdf', '?' => $this->request->getQuery()], ['class' => 'button float-right']) ?>
     <h3><?= __('Tarefa') ?></h3>
+    <div class="filters">
+        <?= $this->Form->create(null, ['type' => 'get']) ?>
+        <fieldset>
+            <legend>Filtros</legend>
+            <?= $this->Form->control('situacao', [
+                'options' => $situacoes,
+                'value' => $situacao,
+                'label' => 'Situação',
+                'empty' => false
+            ]) ?>
+            <?= $this->Form->control('data_criacao', [
+                'type' => 'date',
+                'value' => $dataCriacao,
+                'label' => 'Data de Criação'
+            ]) ?>
+        </fieldset>
+        <?= $this->Form->button('Filtrar') ?>
+        <?= $this->Html->link('Limpar Filtros', ['action' => 'index'], ['class' => 'button']) ?>
+        <?= $this->Form->end() ?>
+    </div>
     <div class="table-responsive">
         <table>
             <thead>

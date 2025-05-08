@@ -5,34 +5,26 @@ namespace App\Test\Fixture;
 
 use Cake\TestSuite\Fixture\TestFixture;
 
-/**
- * TarefaFixture
- */
 class TarefaFixture extends TestFixture
 {
-    /**
-     * Table name
-     *
-     * @var string
-     */
-    public string $table = 'tarefa';
-    /**
-     * Init method
-     *
-     * @return void
-     */
-    public function init(): void
-    {
-        $this->records = [
-            [
-                'id' => 1,
-                'descricao' => 'Lorem ipsum dolor sit amet',
-                'data_criacao' => '2025-03-27 23:21:02',
-                'data_prevista' => '2025-03-27',
-                'data_encerramento' => '2025-03-27',
-                'situacao' => 'Lorem ipsum dolor sit amet',
-            ],
-        ];
-        parent::init();
-    }
+    public $import = ['table' => 'tarefa'];
+
+    public array $records = [
+        [
+            'id' => 1,
+            'descricao' => 'Tarefa de teste 1',
+            'data_criacao' => '2025-05-01 10:00:00',
+            'data_prevista' => '2025-05-10',
+            'data_encerramento' => null,
+            'situacao' => 'pendente',
+        ],
+        [
+            'id' => 2,
+            'descricao' => 'Tarefa de teste 2',
+            'data_criacao' => '2025-05-02 12:00:00',
+            'data_prevista' => '2025-05-15',
+            'data_encerramento' => '2025-05-14',
+            'situacao' => 'concluída',
+        ],
+    ];
 }
