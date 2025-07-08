@@ -23,6 +23,9 @@ WORKDIR /var/www/html
 # Copia os arquivos do projeto
 COPY . .
 
+# --- ADICIONE ESTA LINHA PARA DAR PERMISSÃO DE EXECUÇÃO ---
+RUN chmod +x bin/cake
+
 # Instala as dependências do Composer
 RUN composer install --no-interaction --optimize-autoloader
 
