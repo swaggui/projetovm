@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  #--- AMBIENTE DE PRODUÇÃO ---
+  producao:
+    build: .
+    ports:
+      - "8082:80" # Mapeia a porta 8082 da VM para a porta 80 do contêiner
+    volumes:
+      - ./:/var/www/html
+    environment:
+      - DB_HOST=db
+      - DB_DATABASE=db_producao
+      - DB_USER=root
+      - DB_PASSWORD=root
+      - APP_ENV=production
+
+  #--- AMBIENTE DE HOMOLOGAÇÃO ---
+  homologacao:
+    build: .
+    ports:
+      - "8081:80" # Mapeia a porta 8081 da VM para a porta 80 do contêiner
+    volumes:
+      - ./:/var/www/html
+    environment:
+      - DB_HOST=db
+      - DB_DATABASE=db_homologacao
+      - DB_USER=root
+      - DB_PASSWORD=root
+      - APP_ENV=staging
+
+  #--- BANCO DE DADOS (COMPARTILHADO, MAS COM DATABASES SEPARADOS) ---
+  db:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db_producao # Cria o banco de produção ao iniciar
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data: # Volume para persistir os dados do banco de dados

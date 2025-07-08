@@ -1,0 +1,61 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main # Dispara a pipeline quando houver push na branch 'main'
+
+jobs:
+  test-and-deploy-homolog:
+    name: Testar e Publicar em Homologação
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 1. Clonar o repositório
+        uses: actions/checkout@v3
+
+      - name: 2. Configurar PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+
+      - name: 3. Instalar dependências
+        run: composer install --no-interaction --optimize-autoloader
+
+      - name: 4. Executar Testes Automatizados
+        run: vendor/bin/phpunit
+
+      - name: 5. Deploy para Homologação
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            cd /home/univates/projetovm
+            git pull
+            docker-compose up -d --build homologacao
+            docker-compose exec homologacao bin/cake migrations migrate
+
+  deploy-producao:
+    name: Publicar em Produção (Manual)
+    runs-on: ubuntu-latest
+    needs: test-and-deploy-homolog # Depende do sucesso do job anterior
+    if: github.ref == 'refs/heads/main' # Só aparece para a branch main
+
+    environment:
+      name: Producao
+      url: http://${{ secrets.SSH_HOST }}:8082
+
+    steps:
+      - name: Deploy para Produção
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            cd /home/univates/projetovm
+            git pull
+            docker-compose up -d --build producao
+            docker-compose exec producao bin/cake migrations migrate
