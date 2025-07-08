@@ -272,8 +272,8 @@ return [
             'className' => Connection::class,
             'driver' => Mysql::class,
             'persistent' => false,
-            'host' => env('DB_HOST', '127.0.0.1'), // Força a conexão TCP/IP
-            'port' => 3306,                        // É bom ser explícito sobre a porta também
+            'host' => env('DB_HOST', 'localhost'),
+            'port' => 3306,
             'username' => env('DB_USER', 'root'),
             'password' => env('DB_PASSWORD', 'root'),
             'database' => env('DB_DATABASE', 'cake_db'),
