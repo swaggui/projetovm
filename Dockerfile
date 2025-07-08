@@ -1,5 +1,5 @@
 # Use a imagem base do PHP com Apache
-FROM php:8.2-apache # Vamos usar a versão 8.2 para garantir compatibilidade
+FROM php:8.2-apache
 
 # Instala dependências do sistema e as extensões PHP necessárias
 RUN apt-get update && apt-get install -y \
