@@ -4,10 +4,10 @@ services:
   #--- SERVIÇO PARA RODAR TESTES ---
   test-runner:
     build: .
-    command: tail -f /dev/null # Mantém o contêiner rodando para que possamos executar comandos nele
+    command: tail -f /dev/null
     environment:
       - DB_HOST=db
-      - DB_DATABASE=db_test # Usa um banco de dados de teste
+      - DB_DATABASE=db_test
       - DB_USER=root
       - DB_PASSWORD=root
       - APP_ENV=test
@@ -17,8 +17,7 @@ services:
     build: .
     ports:
       - "8082:80"
-    volumes:
-      - ./:/var/www/html
+    # A seção 'volumes' foi removida daqui
     environment:
       - DB_HOST=db
       - DB_DATABASE=db_producao
@@ -31,8 +30,7 @@ services:
     build: .
     ports:
       - "8081:80"
-    volumes:
-      - ./:/var/www/html
+    # E daqui também
     environment:
       - DB_HOST=db
       - DB_DATABASE=db_homologacao
@@ -48,7 +46,6 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: db_producao
-      # Cria os outros bancos de dados ao iniciar
       MYSQL_EXTRA_DATABASES: db_homologacao,db_test
     volumes:
       - db_data:/var/lib/mysql
