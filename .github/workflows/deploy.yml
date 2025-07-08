@@ -6,54 +6,48 @@ on:
       - main
 
 jobs:
-  test-and-deploy-homolog:
-    name: Testar e Publicar em Homologação
+  test:
+    name: Executar Testes Automatizados
     runs-on: self-hosted
 
     steps:
-      - name: 1. Clonar o repositório
+      - name: 1. Fazer checkout do código
         uses: actions/checkout@v3
 
-      - name: 2. Configurar PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          # --- ESTA É A LINHA CORRIGIDA ---
-          extensions: mbstring, intl, pdo_sqlite # Adicionado pdo_sqlite
+      - name: 2. Construir imagem de teste
+        run: sudo docker-compose build test-runner
 
-      - name: 3. Instalar dependências
-        run: composer install --no-interaction --optimize-autoloader
+      - name: 3. Rodar os testes
+        run: sudo docker-compose run --rm test-runner vendor/bin/phpunit
 
-      - name: 4. Executar Testes Automatizados
-        run: vendor/bin/phpunit
+  deploy-homolog:
+    name: Publicar em Homologação
+    runs-on: self-hosted
+    needs: test # Só roda se os testes passarem
 
-      - name: 5. Deploy para Homologação
+    steps:
+      - name: Fazer checkout do código
+        uses: actions/checkout@v3
+
+      - name: Deploy
         run: |
-          echo "Iniciando deploy de homologação..."
-          git pull
           sudo docker-compose up -d --build homologacao
           sudo docker-compose exec homologacao bin/cake migrations migrate
-          echo "Deploy de homologação concluído."
 
   deploy-producao:
     name: Publicar em Produção (Manual)
     runs-on: self-hosted
-    needs: test-and-deploy-homolog
-    if: github.ref == 'refs/heads/main'
+    needs: deploy-homolog # Só roda depois de homologação
 
     environment:
       name: Producao
       url: http://177.44.248.63:8082
 
     steps:
-      - name: Deploy para Produção
-        uses: actions/checkout@v3 # Adicionado checkout para garantir os arquivos corretos
-        with:
-          ref: ${{ github.sha }} # Garante que estamos na versão exata do commit
+      - name: Fazer checkout do código
+        uses: actions/checkout@v3
 
-      - name: Executar Deploy
+      - name: Deploy
         run: |
-          echo "Iniciando deploy de produção..."
           sudo docker-compose up -d --build producao
           sudo docker-compose exec producao bin/cake migrations migrate
-          echo "Deploy de produção concluído."

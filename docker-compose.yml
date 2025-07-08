@@ -1,11 +1,22 @@
 version: '3.8'
 
 services:
+  #--- SERVIÇO PARA RODAR TESTES ---
+  test-runner:
+    build: .
+    command: tail -f /dev/null # Mantém o contêiner rodando para que possamos executar comandos nele
+    environment:
+      - DB_HOST=db
+      - DB_DATABASE=db_test # Usa um banco de dados de teste
+      - DB_USER=root
+      - DB_PASSWORD=root
+      - APP_ENV=test
+
   #--- AMBIENTE DE PRODUÇÃO ---
   producao:
     build: .
     ports:
-      - "8082:80" # Mapeia a porta 8082 da VM para a porta 80 do contêiner
+      - "8082:80"
     volumes:
       - ./:/var/www/html
     environment:
@@ -19,7 +30,7 @@ services:
   homologacao:
     build: .
     ports:
-      - "8081:80" # Mapeia a porta 8081 da VM para a porta 80 do contêiner
+      - "8081:80"
     volumes:
       - ./:/var/www/html
     environment:
@@ -29,16 +40,18 @@ services:
       - DB_PASSWORD=root
       - APP_ENV=staging
 
-  #--- BANCO DE DADOS (COMPARTILHADO, MAS COM DATABASES SEPARADOS) ---
+  #--- BANCO DE DADOS ---
   db:
     image: mysql:8.0
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: db_producao # Cria o banco de produção ao iniciar
+      MYSQL_DATABASE: db_producao
+      # Cria os outros bancos de dados ao iniciar
+      MYSQL_EXTRA_DATABASES: db_homologacao,db_test
     volumes:
       - db_data:/var/lib/mysql
 
 volumes:
-  db_data: # Volume para persistir os dados do banco de dados
+  db_data:

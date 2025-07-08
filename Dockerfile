@@ -1,28 +1,28 @@
-# Use uma imagem base do PHP com Apache
-FROM php:8.1-apache
+# Use a imagem base do PHP com Apache
+FROM php:8.2-apache # Vamos usar a versão 8.2 para garantir compatibilidade
 
-# Instala as extensões PHP necessárias para o CakePHP e MySQL
+# Instala dependências do sistema e as extensões PHP necessárias
 RUN apt-get update && apt-get install -y \
     libicu-dev \
     libonig-dev \
     libzip-dev \
     unzip \
-    && docker-php-ext-install -j$(nproc) intl pdo pdo_mysql mbstring zip
+    && docker-php-ext-install -j$(nproc) intl pdo pdo_mysql mbstring zip pdo_sqlite
 
-# Habilita o mod_rewrite do Apache para as URLs amigáveis
+# Habilita o mod_rewrite do Apache
 RUN a2enmod rewrite
 
-# Instala o Composer (gerenciador de dependências do PHP)
+# Instala o Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Define o diretório de trabalho dentro do contêiner
+# Define o diretório de trabalho
 WORKDIR /var/www/html
 
-# Copia o código da sua aplicação para dentro do contêiner
+# Copia os arquivos do projeto
 COPY . .
 
-# Instala as dependências do projeto com o Composer
+# Instala as dependências do Composer
 RUN composer install --no-interaction --optimize-autoloader
 
-# Muda o dono dos arquivos para o usuário do Apache para evitar problemas de permissão
+# Ajusta as permissões das pastas
 RUN chown -R www-data:www-data tmp logs
