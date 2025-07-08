@@ -12,25 +12,19 @@ jobs:
     steps:
       - name: 1. Fazer checkout do código
         uses: actions/checkout@v3
-
       - name: 2. Iniciar dependências e esperar o DB
         run: |
-          # Garante que tudo está limpo antes de começar
           sudo docker-compose down
-          # Sobe o banco de dados em background
           sudo docker-compose up -d db
-          # Espera o banco ficar saudável
           echo "Aguardando o banco de dados para os testes..."
           while ! sudo docker-compose ps | grep 'db' | grep -q 'healthy'; do
             sleep 5
             echo "..."
           done
           echo "Banco de dados pronto!"
-
       - name: 3. Rodar os testes
         run: sudo docker-compose run --rm test-runner vendor/bin/phpunit
 
-  # ... (os jobs deploy-homolog e deploy-producao permanecem iguais) ...
   deploy-homolog:
     name: Publicar em Homologação
     runs-on: self-hosted
@@ -38,13 +32,16 @@ jobs:
     steps:
       - name: Fazer checkout do código
         uses: actions/checkout@v3
-
       - name: Deploy
         run: |
           sudo docker-compose down
           sudo docker-compose up -d --build homologacao
-          # O depends_on no docker-compose.yml já cuida da espera aqui
-          echo "Executando migrations em homologação..."
+          echo "Aguardando o banco de dados ficar pronto..."
+          while ! sudo docker-compose ps | grep 'db' | grep -q 'healthy'; do
+            sleep 5
+            echo "..."
+          done
+          echo "Banco de dados pronto!"
           sudo docker-compose exec -T homologacao bin/cake migrations migrate
 
   deploy-producao:
@@ -57,11 +54,14 @@ jobs:
     steps:
       - name: Fazer checkout do código
         uses: actions/checkout@v3
-
       - name: Deploy
         run: |
           sudo docker-compose down
           sudo docker-compose up -d --build producao
-          # E aqui também
-          echo "Executando migrations em produção..."
+          echo "Aguardando o banco de dados ficar pronto..."
+          while ! sudo docker-compose ps | grep 'db' | grep -q 'healthy'; do
+            sleep 5
+            echo "..."
+          done
+          echo "Banco de dados pronto!"
           sudo docker-compose exec -T producao bin/cake migrations migrate
