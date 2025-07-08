@@ -12,6 +12,7 @@ jobs:
     steps:
       - name: 1. Fazer checkout do código
         uses: actions/checkout@v3
+
       - name: 2. Iniciar dependências e esperar o DB
         run: |
           sudo docker-compose down
@@ -21,7 +22,8 @@ jobs:
             sleep 5
             echo "..."
           done
-          echo "Banco de dados pronto!"
+          echo "Banco de dados de teste pronto!"
+
       - name: 3. Rodar os testes
         run: sudo docker-compose run --rm test-runner vendor/bin/phpunit
 
@@ -32,16 +34,19 @@ jobs:
     steps:
       - name: Fazer checkout do código
         uses: actions/checkout@v3
+
       - name: Deploy
         run: |
           sudo docker-compose down
           sudo docker-compose up -d --build homologacao
-          echo "Aguardando o banco de dados ficar pronto..."
+          echo "Aguardando o banco de dados de homologação..."
           while ! sudo docker-compose ps | grep 'db' | grep -q 'healthy'; do
             sleep 5
             echo "..."
           done
-          echo "Banco de dados pronto!"
+          echo "Banco de dados pronto! Dando um tempo extra..."
+          sleep 10 # <-- A MUDANÇA MÁGICA ESTÁ AQUI
+          echo "Executando migrations em homologação..."
           sudo docker-compose exec -T homologacao bin/cake migrations migrate
 
   deploy-producao:
@@ -54,14 +59,17 @@ jobs:
     steps:
       - name: Fazer checkout do código
         uses: actions/checkout@v3
+
       - name: Deploy
         run: |
           sudo docker-compose down
           sudo docker-compose up -d --build producao
-          echo "Aguardando o banco de dados ficar pronto..."
+          echo "Aguardando o banco de dados de produção..."
           while ! sudo docker-compose ps | grep 'db' | grep -q 'healthy'; do
             sleep 5
             echo "..."
           done
-          echo "Banco de dados pronto!"
+          echo "Banco de dados pronto! Dando um tempo extra..."
+          sleep 10 # <-- E AQUI TAMBÉM
+          echo "Executando migrations em produção..."
           sudo docker-compose exec -T producao bin/cake migrations migrate
