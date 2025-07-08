@@ -1,5 +1,5 @@
 <div class="users form">
-    <h2>Login</h2>
+    <h2>Loginaokd</h2>
     <?= $this->Form->create() ?>
     <fieldset>
         <?= $this->Form->control('email', ['required' => true, 'label' => 'Email']) ?>
