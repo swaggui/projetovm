@@ -11,32 +11,39 @@ services:
       - DB_USER=root
       - DB_PASSWORD=root
       - APP_ENV=test
+    depends_on:
+      db:
+        condition: service_healthy
 
   #--- AMBIENTE DE PRODUÇÃO ---
   producao:
     build: .
     ports:
       - "8082:80"
-    # A seção 'volumes' foi removida daqui
     environment:
       - DB_HOST=db
       - DB_DATABASE=db_producao
       - DB_USER=root
       - DB_PASSWORD=root
       - APP_ENV=production
+    depends_on:
+      db:
+        condition: service_healthy
 
   #--- AMBIENTE DE HOMOLOGAÇÃO ---
   homologacao:
     build: .
     ports:
       - "8081:80"
-    # E daqui também
     environment:
       - DB_HOST=db
       - DB_DATABASE=db_homologacao
       - DB_USER=root
       - DB_PASSWORD=root
       - APP_ENV=staging
+    depends_on:
+      db:
+        condition: service_healthy
 
   #--- BANCO DE DADOS ---
   db:
@@ -50,7 +57,7 @@ services:
     volumes:
       - db_data:/var/lib/mysql
     healthcheck:
-      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost", "-u", "root", "-proot" ]
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-u", "root", "-proot"]
       interval: 10s
       timeout: 5s
       retries: 5
