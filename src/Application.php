@@ -20,12 +20,11 @@ class Application extends BaseApplication
     public function bootstrap(): void
     {
         parent::bootstrap();
+
         $this->addPlugin('CakePdf');
+
         if (PHP_SAPI === 'cli') {
             $this->bootstrapCli();
-        }
-        if (file_exists(CONFIG . 'bootstrap.php')) {
-            require_once CONFIG . 'bootstrap.php';
         }
     }
 
