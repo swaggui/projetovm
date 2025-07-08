@@ -374,6 +374,7 @@ return [
      */
     'Session' => [
         'defaults' => 'php',
+        'cookie' => 'CAKEPHP_' . env('APP_ENV', 'PROD'),
     ],
 
     /**
