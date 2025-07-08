@@ -11,7 +11,7 @@ class UsersController extends AppController
     {
         parent::initialize();
         // Permitir acesso público a todas as ações deste controlador
-        $this->Auth = null; // Desativar qualquer autenticação padrão
+        //$this->Auth = null; // Desativar qualquer autenticação padrão
     }
 
     public function login()
