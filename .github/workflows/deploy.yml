@@ -23,7 +23,7 @@ jobs:
   deploy-homolog:
     name: Publicar em Homologação
     runs-on: self-hosted
-    needs: test # Só roda se os testes passarem
+    needs: test
 
     steps:
       - name: Fazer checkout do código
@@ -32,12 +32,13 @@ jobs:
       - name: Deploy
         run: |
           sudo docker-compose up -d --build homologacao
-          sudo docker-compose exec homologacao bin/cake migrations migrate
+          # --- A LINHA CORRIGIDA ESTÁ AQUI ---
+          sudo docker-compose exec -T homologacao bin/cake migrations migrate
 
   deploy-producao:
     name: Publicar em Produção (Manual)
     runs-on: self-hosted
-    needs: deploy-homolog # Só roda depois de homologação
+    needs: deploy-homolog
 
     environment:
       name: Producao
@@ -50,4 +51,5 @@ jobs:
       - name: Deploy
         run: |
           sudo docker-compose up -d --build producao
-          sudo docker-compose exec producao bin/cake migrations migrate
+          # --- E AQUI TAMBÉM ---
+          sudo docker-compose exec -T producao bin/cake migrations migrate
