@@ -8,7 +8,6 @@ on:
 jobs:
   test-and-deploy-homolog:
     name: Testar e Publicar em Homologação
-    # Esta linha diz ao job para rodar no seu agente auto-hospedado
     runs-on: self-hosted
 
     steps:
@@ -19,6 +18,8 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
+          # --- ESTA É A LINHA CORRIGIDA ---
+          extensions: mbstring, intl, pdo_sqlite # Adicionado pdo_sqlite
 
       - name: 3. Instalar dependências
         run: composer install --no-interaction --optimize-autoloader
@@ -36,7 +37,7 @@ jobs:
 
   deploy-producao:
     name: Publicar em Produção (Manual)
-    runs-on: self-hosted # Também rodará no seu agente
+    runs-on: self-hosted
     needs: test-and-deploy-homolog
     if: github.ref == 'refs/heads/main'
 
@@ -46,11 +47,13 @@ jobs:
 
     steps:
       - name: Deploy para Produção
+        uses: actions/checkout@v3 # Adicionado checkout para garantir os arquivos corretos
+        with:
+          ref: ${{ github.sha }} # Garante que estamos na versão exata do commit
+
+      - name: Executar Deploy
         run: |
           echo "Iniciando deploy de produção..."
-          # O checkout e git pull são importantes para garantir que estamos na versão certa
-          uses: actions/checkout@v3
-          git pull
           sudo docker-compose up -d --build producao
           sudo docker-compose exec producao bin/cake migrations migrate
           echo "Deploy de produção concluído."
