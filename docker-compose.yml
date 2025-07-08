@@ -52,8 +52,9 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: db_producao
-      MYSQL_EXTRA_DATABASES: db_homologacao,db_test
+      MYSQL_DATABASE: db_producao # Cria este banco por padrão
+      # --- ESTA É A LINHA MÁGICA ---
+      MYSQL_EXTRA_DATABASES: db_homologacao,db_test # E estes bancos adicionais
     volumes:
       - db_data:/var/lib/mysql
     healthcheck:
