@@ -31,8 +31,12 @@ jobs:
 
       - name: Deploy
         run: |
+          # --- ESTA É A MUDANÇA PRINCIPAL ---
+          # 1. Garante que o serviço antigo seja parado e removido
+          sudo docker-compose down
+          # 2. Sobe a nova versão a partir de uma imagem recém-construída
           sudo docker-compose up -d --build homologacao
-          # --- A LINHA CORRIGIDA ESTÁ AQUI ---
+          # 3. Executa as migrations no novo contêiner
           sudo docker-compose exec -T homologacao bin/cake migrations migrate
 
   deploy-producao:
@@ -50,6 +54,7 @@ jobs:
 
       - name: Deploy
         run: |
+          # --- A MESMA MUDANÇA APLICADA AQUI ---
+          sudo docker-compose down
           sudo docker-compose up -d --build producao
-          # --- E AQUI TAMBÉM ---
           sudo docker-compose exec -T producao bin/cake migrations migrate
