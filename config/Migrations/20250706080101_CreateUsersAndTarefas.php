@@ -24,8 +24,8 @@ class CreateUsersAndTarefas extends AbstractMigration
             ->addColumn('data_criacao', 'datetime', ['default' => 'CURRENT_TIMESTAMP', 'null' => false])
             ->addColumn('data_prevista', 'date', ['null' => false])
             ->addColumn('data_encerramento', 'date', ['null' => true])
-            ->addColumn('situacao', 'enum', [
-                'values' => ['pendente', 'em andamento', 'concluída'],
+            ->addColumn('situacao', 'string', [ // Mude 'enum' para 'string'
+                'limit' => 20, // Define um limite de caracteres
                 'default' => 'pendente',
                 'null' => false
             ])
