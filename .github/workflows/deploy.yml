@@ -31,30 +31,44 @@ jobs:
 
       - name: Deploy
         run: |
-          # --- ESTA É A MUDANÇA PRINCIPAL ---
-          # 1. Garante que o serviço antigo seja parado e removido
           sudo docker-compose down
-          # 2. Sobe a nova versão a partir de uma imagem recém-construída
           sudo docker-compose up -d --build homologacao
-          # 3. Executa as migrations no novo contêiner
+
+          # --- SCRIPT DE ESPERA ---
+          echo "Aguardando o banco de dados ficar pronto..."
+          while ! sudo docker-compose ps | grep 'db' | grep -q 'healthy'; do
+            sleep 5
+            echo "..."
+          done
+          echo "Banco de dados pronto!"
+
+          # Agora executa a migration com segurança
           sudo docker-compose exec -T homologacao bin/cake migrations migrate
 
-  deploy-producao:
-    name: Publicar em Produção (Manual)
-    runs-on: self-hosted
-    needs: deploy-homolog
+    deploy-producao:
+      name: Publicar em Produção (Manual)
+      runs-on: self-hosted
+      needs: deploy-homolog
 
-    environment:
-      name: Producao
-      url: http://177.44.248.63:8082
+      environment:
+        name: Producao
+        url: http://177.44.248.63:8082
 
-    steps:
-      - name: Fazer checkout do código
-        uses: actions/checkout@v3
+      steps:
+        - name: Fazer checkout do código
+          uses: actions/checkout@v3
 
-      - name: Deploy
-        run: |
-          # --- A MESMA MUDANÇA APLICADA AQUI ---
-          sudo docker-compose down
-          sudo docker-compose up -d --build producao
-          sudo docker-compose exec -T producao bin/cake migrations migrate
+        - name: Deploy
+          run: |
+            sudo docker-compose down
+            sudo docker-compose up -d --build producao
+
+            # --- SCRIPT DE ESPERA TAMBÉM AQUI ---
+            echo "Aguardando o banco de dados ficar pronto..."
+            while ! sudo docker-compose ps | grep 'db' | grep -q 'healthy'; do
+              sleep 5
+              echo "..."
+            done
+            echo "Banco de dados pronto!"
+
+            sudo docker-compose exec -T producao bin/cake migrations migrate

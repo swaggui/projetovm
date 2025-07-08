@@ -49,6 +49,11 @@ services:
       MYSQL_EXTRA_DATABASES: db_homologacao,db_test
     volumes:
       - db_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost", "-u", "root", "-proot" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   db_data:
