@@ -11,7 +11,9 @@ services:
       - DB_USER=root
       - DB_PASSWORD=root
       - APP_ENV=test
-    # A seção 'depends_on' foi REMOVIDA daqui
+    depends_on:
+      db:
+        condition: service_healthy
 
   #--- AMBIENTE DE PRODUÇÃO ---
   producao:
@@ -24,7 +26,7 @@ services:
       - DB_USER=root
       - DB_PASSWORD=root
       - APP_ENV=production
-    depends_on: # MANTENHA AQUI
+    depends_on:
       db:
         condition: service_healthy
 
@@ -39,7 +41,7 @@ services:
       - DB_USER=root
       - DB_PASSWORD=root
       - APP_ENV=staging
-    depends_on: # E AQUI
+    depends_on:
       db:
         condition: service_healthy
 
