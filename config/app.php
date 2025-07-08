@@ -272,10 +272,11 @@ return [
             'className' => Connection::class,
             'driver' => Mysql::class,
             'persistent' => false,
-            'host' => env('DB_HOST', 'localhost'), // Lê a variável de ambiente
-            'username' => env('DB_USER', 'root'),      // Lê a variável de ambiente
-            'password' => env('DB_PASSWORD', 'root'),  // Lê a variável de ambiente
-            'database' => env('DB_DATABASE', 'cake_db'), // Lê a variável de ambiente
+            'host' => env('DB_HOST', '127.0.0.1'), // Força a conexão TCP/IP
+            'port' => 3306,                        // É bom ser explícito sobre a porta também
+            'username' => env('DB_USER', 'root'),
+            'password' => env('DB_PASSWORD', 'root'),
+            'database' => env('DB_DATABASE', 'cake_db'),
             'timezone' => 'UTC',
             'encoding' => 'utf8mb4',
             'flags' => [],
