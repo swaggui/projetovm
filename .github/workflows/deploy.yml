@@ -26,7 +26,7 @@ jobs:
         run: vendor/bin/phpunit
 
       - name: 5. Deploy para Homologação
-        uses: appleboy/ssh-action@v0.1.7
+        uses: appleboy/ssh-action@v1.2.2
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
@@ -49,7 +49,7 @@ jobs:
 
     steps:
       - name: Deploy para Produção
-        uses: appleboy/ssh-action@v0.1.7
+        uses: appleboy/ssh-action@v1.2.2
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
