@@ -3,12 +3,13 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main # Dispara a pipeline quando houver push na branch 'main'
+      - main
 
 jobs:
   test-and-deploy-homolog:
     name: Testar e Publicar em Homologação
-    runs-on: ubuntu-latest
+    # Esta linha diz ao job para rodar no seu agente auto-hospedado
+    runs-on: self-hosted
 
     steps:
       - name: 1. Clonar o repositório
@@ -26,20 +27,16 @@ jobs:
         run: vendor/bin/phpunit
 
       - name: 5. Deploy para Homologação
-        uses: appleboy/ssh-action@v0.1.7
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          password: ${{ secrets.SSH_PASSWORD }}
-          script: |
-            cd /home/univates/projetovm
-            git pull
-            sudo docker-compose up -d --build homologacao
-            sudo docker-compose exec homologacao bin/cake migrations migrate
+        run: |
+          echo "Iniciando deploy de homologação..."
+          git pull
+          sudo docker-compose up -d --build homologacao
+          sudo docker-compose exec homologacao bin/cake migrations migrate
+          echo "Deploy de homologação concluído."
 
   deploy-producao:
     name: Publicar em Produção (Manual)
-    runs-on: ubuntu-latest
+    runs-on: self-hosted # Também rodará no seu agente
     needs: test-and-deploy-homolog
     if: github.ref == 'refs/heads/main'
 
@@ -49,13 +46,11 @@ jobs:
 
     steps:
       - name: Deploy para Produção
-        uses: appleboy/ssh-action@v0.1.7
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          password: ${{ secrets.SSH_PASSWORD }}
-          script: |
-            cd /home/univates/projetovm
-            git pull
-            sudo docker-compose up -d --build producao
-            sudo docker-compose exec producao bin/cake migrations migrate
+        run: |
+          echo "Iniciando deploy de produção..."
+          # O checkout e git pull são importantes para garantir que estamos na versão certa
+          uses: actions/checkout@v3
+          git pull
+          sudo docker-compose up -d --build producao
+          sudo docker-compose exec producao bin/cake migrations migrate
+          echo "Deploy de produção concluído."
