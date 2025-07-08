@@ -1,4 +1,5 @@
-# Use a imagem base do PHP com Apache
+# Use uma imagem base do PHP com Apache
+# Vamos usar a versão 8.2 para garantir compatibilidade
 FROM php:8.2-apache
 
 # Instala dependências do sistema e as extensões PHP necessárias
@@ -7,6 +8,7 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     libzip-dev \
     unzip \
+    libsqlite3-dev \
     && docker-php-ext-install -j$(nproc) intl pdo pdo_mysql mbstring zip pdo_sqlite
 
 # Habilita o mod_rewrite do Apache
