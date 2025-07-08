@@ -34,18 +34,18 @@ jobs:
           script: |
             cd /home/univates/projetovm
             git pull
-            docker-compose up -d --build homologacao
-            docker-compose exec homologacao bin/cake migrations migrate
+            sudo docker-compose up -d --build homologacao
+            sudo docker-compose exec homologacao bin/cake migrations migrate
 
   deploy-producao:
     name: Publicar em Produção (Manual)
     runs-on: ubuntu-latest
-    needs: test-and-deploy-homolog # Depende do sucesso do job anterior
-    if: github.ref == 'refs/heads/main' # Só aparece para a branch main
+    needs: test-and-deploy-homolog
+    if: github.ref == 'refs/heads/main'
 
     environment:
       name: Producao
-      url: http://${{ secrets.SSH_HOST }}:8082
+      url: http://177.44.248.63:8082
 
     steps:
       - name: Deploy para Produção
@@ -57,5 +57,5 @@ jobs:
           script: |
             cd /home/univates/projetovm
             git pull
-            docker-compose up -d --build producao
-            docker-compose exec producao bin/cake migrations migrate
+            sudo docker-compose up -d --build producao
+            sudo docker-compose exec producao bin/cake migrations migrate
