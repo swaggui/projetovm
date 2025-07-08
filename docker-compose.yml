@@ -53,9 +53,12 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: db_producao
-      MYSQL_EXTRA_DATABASES: db_homologacao,db_test
+      # A variável MYSQL_EXTRA_DATABASES foi removida pois não é padrão.
     volumes:
+      # Monta o volume para os dados persistirem
       - db_data:/var/lib/mysql
+      # Monta o nosso diretório de scripts de inicialização
+      - ./docker/mysql/initdb.d:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-u", "root", "-proot"]
       interval: 10s
