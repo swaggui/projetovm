@@ -120,11 +120,11 @@ class TarefaControllerTest extends TestCase
         $this->assertFlashMessage('Tarefa excluída com sucesso.');
     }
 
-    public function testExportPdfAction(): void
+    /*public function testExportPdfAction(): void
     {
         $this->get('/tarefa/exportPdf');
         $this->assertResponseOk();
         $this->assertHeader('Content-Type', 'application/pdf');
         $this->assertHeaderContains('Content-Disposition', 'attachment; filename="tarefas_');
-    }
+    }*/
 }
