@@ -11,7 +11,7 @@
     <?= $this->Html->link(__('Nova Tarefa'), ['action' => 'add'], ['class' => 'button float-right']) ?>
     <?= $this->Html->link('Sair', ['controller' => 'Users', 'action' => 'logout'], ['class' => 'button float-right']) ?>
     <?= $this->Html->link('Exportar para PDF', ['action' => 'exportPdf', '?' => $this->request->getQuery()], ['class' => 'button float-right']) ?>
-    <h3><?= __('Tarefas') ?></h3>
+    <h3><?= __('Tarefasteste') ?></h3>
     <div class="filters">
         <?= $this->Form->create(null, ['type' => 'get']) ?>
         <fieldset>
