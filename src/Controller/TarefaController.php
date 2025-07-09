@@ -114,15 +114,16 @@ class TarefaController extends AppController
 
         $tarefas = $this->fetchTable('Tarefas')->find()->where($conditions)->all();
 
-        $this->viewBuilder()
-            ->setClassName('CakePdf.Pdf')
-            ->setTemplatePath('Tarefa/pdf')
-            ->setTemplate('export')
-            ->setOption('pdfConfig', [
-                'isDownload' => true,
+        $this->viewBuilder()->setClassName('CakePdf.Pdf');
+        $this->viewBuilder()->setOption(
+            'pdfConfig',
+            [
+                'orientation' => 'portrait',
+                'download' => true,
                 'filename' => 'tarefas_' . date('Y-m-d') . '.pdf'
-            ]);
-
+            ]
+        );
+        $this->viewBuilder()->setTemplate('export', 'pdf/default');
         $this->set(compact('tarefas'));
     }
 }
