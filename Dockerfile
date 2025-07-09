@@ -29,5 +29,7 @@ RUN chmod +x bin/cake
 # Instala as dependências do Composer
 RUN composer install --no-interaction --optimize-autoloader
 
+RUN composer dump-autoload --optimize
+
 # Ajusta as permissões das pastas
 RUN chown -R www-data:www-data tmp logs
