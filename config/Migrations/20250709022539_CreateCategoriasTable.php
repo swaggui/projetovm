@@ -15,11 +15,6 @@ class CreateCategoriasTable extends BaseMigration
     public function change(): void
     {
         $table = $this->table('categorias_table');
-        $table->addColumn('id', 'integer', [
-            'default' => null,
-            'limit' => 11,
-            'null' => false,
-        ]);
         $table->addColumn('descricao', 'string', [
             'default' => null,
             'limit' => 255,
