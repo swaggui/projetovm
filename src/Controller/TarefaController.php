@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use Cake\Event\EventInterface;
 use App\Pdf\TarefaPdf;
+use Cake\Event\EventInterface;
 
 class TarefaController extends AppController
 {
