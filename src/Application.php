@@ -21,8 +21,6 @@ class Application extends BaseApplication
     {
         parent::bootstrap();
 
-        $this->addPlugin('CakePdf');
-
         if (PHP_SAPI === 'cli') {
             $this->bootstrapCli();
         }
