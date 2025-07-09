@@ -33,5 +33,5 @@ return [
     'Migrations' => ['onlyCli' => true],
 
     // Additional plugins here
-    'CakePdf' => [],
+    /*'CakePdf' => [],*/
 ];

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Cake\Event\EventInterface;
+use App\Pdf\TarefaPdf;
 
 class TarefaController extends AppController
 {
@@ -99,6 +100,9 @@ class TarefaController extends AppController
 
     public function exportPdf()
     {
+        // Desabilita a renderização de view do CakePHP
+        $this->autoRender = false;
+
         $conditions = [];
         $conditions['user_id'] = $this->request->getSession()->read('User.id');
 
@@ -114,16 +118,13 @@ class TarefaController extends AppController
 
         $tarefas = $this->fetchTable('Tarefas')->find()->where($conditions)->all();
 
-        $this->viewBuilder()->setClassName('CakePdf.Pdf');
-        $this->viewBuilder()->setOption(
-            'pdfConfig',
-            [
-                'orientation' => 'portrait',
-                'download' => true,
-                'filename' => 'tarefas_' . date('Y-m-d') . '.pdf'
-            ]
-        );
-        $this->viewBuilder()->setTemplate('export', 'pdf/default');
-        $this->set(compact('tarefas'));
+        // Instancia a nova classe de PDF
+        $pdf = new TarefaPdf();
+        $header = ['ID', 'Descricao', 'Data Prevista', 'Encerramento', 'Situacao'];
+        $pdf->SetFont('Arial', '', 10);
+        $pdf->AddPage();
+        $pdf->CreateTable($header, $tarefas);
+
+        $pdf->Output('I', 'relatorio_tarefas.pdf');
     }
 }

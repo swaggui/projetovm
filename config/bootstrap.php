@@ -235,7 +235,7 @@ ServerRequest::addDetector('tablet', function ($request) {
 /*
  * Configure CakePdf for PDF generation
  */
-Configure::write('CakePdf', [
+/*Configure::write('CakePdf', [
     'engine' => 'CakePdf.Dompdf',
     'options' => [
         'print-media-type' => false,
@@ -250,4 +250,4 @@ Configure::write('CakePdf', [
     ],
     'orientation' => 'portrait',
     'download' => true
-]);
+]);*/
