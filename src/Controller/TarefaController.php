@@ -100,9 +100,7 @@ class TarefaController extends AppController
 
     public function exportPdf()
     {
-        // Desabilita a renderização de view do CakePHP
-        $this->autoRender = false;
-
+        // 1. Buscamos os dados como antes
         $conditions = [];
         $conditions['user_id'] = $this->request->getSession()->read('User.id');
 
@@ -118,13 +116,24 @@ class TarefaController extends AppController
 
         $tarefas = $this->fetchTable('Tarefas')->find()->where($conditions)->all();
 
-        // Instancia a nova classe de PDF
+        // 2. Criamos o PDF
         $pdf = new TarefaPdf();
         $header = ['ID', 'Descricao', 'Data Prevista', 'Encerramento', 'Situacao'];
         $pdf->SetFont('Arial', '', 10);
         $pdf->AddPage();
         $pdf->CreateTable($header, $tarefas);
 
-        $pdf->Output('I', 'relatorio_tarefas.pdf');
+        // 3. Preparamos a resposta com o CakePHP (A MÁGICA ACONTECE AQUI)
+        $response = $this->getResponse()
+            // Define o tipo do conteúdo como PDF
+            ->withType('application/pdf')
+            // Define o nome do arquivo para download
+            ->withDownload('relatorio_tarefas.pdf');
+
+        // Coloca o conteúdo do PDF no corpo da resposta
+        $response = $response->withStringBody($pdf->Output('S'));
+
+        // Retorna a resposta para o navegador
+        return $response;
     }
 }
