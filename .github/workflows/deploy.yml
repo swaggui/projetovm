@@ -11,7 +11,7 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: 1. Fazer checkout do código
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
 
       - name: 2. Iniciar dependências e esperar o DB
         run: |
@@ -33,7 +33,7 @@ jobs:
 #    needs: test
 #    steps:
 #      - name: Fazer checkout do código
-#        uses: actions/checkout@v3
+#        uses: actions/checkout@v5
 #
 #      - name: Deploy
 #        run: |
@@ -58,7 +58,7 @@ jobs:
 #      url: http://177.44.248.63:8082
 #    steps:
 #      - name: Fazer checkout do código
-#        uses: actions/checkout@v3
+#        uses: actions/checkout@v5
 #
 #      - name: Deploy
 #        run: |
